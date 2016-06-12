@@ -1,0 +1,175 @@
+Significance of Correlation Coefficients
+
+cor.test(train$Survived, train$SexN, method = c("pearson"))
+
+	Pearson's product-moment correlation
+
+data:  train$Survived and train$SexN
+t = -19.149, df = 874, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.5886914 -0.4952492
+sample estimates:
+       cor 
+-0.5436527 
+
+> cor.test(train$Survived, train$Age, method = c("pearson"))
+
+	Pearson's product-moment correlation
+
+data:  train$Survived and train$Age
+t = -1.5344, df = 874, p-value = 0.1253 (P value is statistically significant)
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.11766563  0.01445524
+sample estimates:
+      cor 
+-0.051832
+ 
+> cor.test(train$Survived, train$Pclass, method = c("pearson"))
+
+	Pearson's product-moment correlation
+
+data:  train$Survived and train$Pclass
+t = -10.674, df = 874, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.3969005 -0.2796433
+sample estimates:
+       cor 
+-0.3395907 
+
+> cor.test(train$Survived, train$EmbarkedN, method = c("pearson"))
+
+	Pearson's product-moment correlation
+
+data:  train$Survived and train$EmbarkedN
+t = 3.4993, df = 874, p-value = 0.0004901 (P value is VERY statistically significant)
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.05170904 0.18236181
+sample estimates:
+     cor 
+0.117544 
+
+> cor.test(train$Survived, train$SibSp, method = c("pearson"))
+
+	Pearson's product-moment correlation
+
+data:  train$Survived and train$SibSp
+t = -1.1134, df = 874, p-value = 0.2659 (P value is statistically significant)
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.10361338  0.02867502
+sample estimates:
+        cor 
+-0.03763407
+
+> model_titanic <- lm(Survived~Age, data=train)
+> summary(model_titanic)
+
+Call:
+lm(formula = Survived ~ Age, data = train)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.4363 -0.3938 -0.3638  0.6044  0.7035 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.438029   0.037777  11.595   <2e-16 ***
+Age         -0.001769   0.001153  -1.534    0.125    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4867 on 874 degrees of freedom
+Multiple R-squared:  0.002687,	Adjusted R-squared:  0.001545 
+F-statistic: 2.354 on 1 and 874 DF,  p-value: 0.1253
+
+> model_titanic <- lm(Survived~EmbarkedN, data=train)
+> summary(model_titanic)
+
+Call:
+lm(formula = Survived ~ EmbarkedN, data = train)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.5345 -0.3540 -0.3540  0.5557  0.6460 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.26374    0.03854   6.844 1.45e-11 ***
+EmbarkedN    0.09027    0.02580   3.499  0.00049 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.484 on 874 degrees of freedom
+Multiple R-squared:  0.01382,	Adjusted R-squared:  0.01269 
+F-statistic: 12.24 on 1 and 874 DF,  p-value: 0.0004901
+
+> model_titanic <- lm(Survived~SibSp, data=train)
+> summary(model_titanic)
+
+Call:
+lm(formula = Survived ~ SibSp, data = train)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.3946 -0.3946 -0.3781  0.6054  0.6714 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.39463    0.01825  21.626   <2e-16 ***
+SibSp       -0.01651    0.01483  -1.113    0.266    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.487 on 874 degrees of freedom
+Multiple R-squared:  0.001416,	Adjusted R-squared:  0.0002738 
+F-statistic:  1.24 on 1 and 874 DF,  p-value: 0.2659
+
+We can use the confint function to obtain confidence intervals for the coefficient estimates. Note that for logistic models, confidence intervals are based on the profiled log-likelihood function. We can also get CIs based on just the standard errors by using the default method.
+> confint(modeltitanic)
+Waiting for profiling to be done...
+                  2.5 %      97.5 %
+(Intercept)  4.54350785  6.64453821
+SexN        -2.93723554 -2.19741955
+EmbarkedN    0.05108773  0.60140973
+AgeN        -0.04165801 -0.01420817
+Pclass2     -1.52873563 -0.50361587
+Pclass3     -2.86482528 -1.88170774
+
+Create a logistic regression model using the parameters.
+
+I am going to estimates a logistic regression model by using the glm (generalized linear model) function. Convert rank to a factor to indicate that rank should be treated as a categorical variable.
+
+•	> train$SurvivedW <- factor(train$SurvivedW)
+•	> modeltitanic <- glm(SurvivedW ~ SexN + EmbarkedN + AgeN + Pclass, data = train, family = "binomial")
+•	> summary(model_titanic) (By using function summary() we obtain the results of our model:)
+•	
+•	Call:
+•	glm(formula = SurvivedW ~ SexN + EmbarkedN + AgeN + Pclass, family = "binomial", 
+•	    data = train)
+•	
+•	Deviance Residuals: 
+•	    Min       1Q   Median       3Q      Max  
+•	-2.4901  -0.6794  -0.4121   0.6379   2.4608  
+•	
+•	Coefficients:
+•	             Estimate Std. Error z value Pr(>|z|)    
+•	(Intercept)  5.564759   0.535410  10.393  < 2e-16 ***
+•	SexN        -2.559997   0.188509 -13.580  < 2e-16 ***
+•	EmbarkedN    0.326628   0.140208   2.330 0.019828 *  
+•	AgeN        -0.027725   0.006993  -3.965 7.35e-05 ***
+•	Pclass2     -1.010851   0.261210  -3.870 0.000109 ***
+•	Pclass3     -2.363191   0.250469  -9.435  < 2e-16 ***
+•	---
+•	Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+•	
+•	(Dispersion parameter for binomial family taken to be 1)
+•	
+•	    Null deviance: 1168.33  on 875  degrees of freedom
+•	Residual deviance:  791.06  on 870  degrees of freedom
+•	AIC: 803.06
+•	
+•	Number of Fisher Scoring iterations: 5
